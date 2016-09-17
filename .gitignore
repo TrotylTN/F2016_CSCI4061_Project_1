@@ -1,2 +1,6 @@
 # Untracked files:
-	*.o
+*~
+*.o
+*.ko
+*.obj
+*.elf
