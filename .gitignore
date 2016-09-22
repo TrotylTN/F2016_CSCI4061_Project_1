@@ -3,7 +3,7 @@
 .*
 !.gitignore
 
-.o
+*.o
 *.ko
 *.obj
 *.elf
