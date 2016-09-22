@@ -1,6 +1,9 @@
 # Untracked files:
-*~
-*.o
+
+.*
+!.gitignore
+
+.o
 *.ko
 *.obj
 *.elf
