@@ -25,6 +25,8 @@
 #define MAX_CHILDREN 10
 #define MAX_NODES 10
 
+#define max(a,b) ((a) > (b) ? (a) : (b))
+
 // This stuff is for easy file reading, and parsing the makefile and populating the data structure
 FILE * file_open(char*);
 char * file_getline(char*, FILE*);
@@ -64,11 +66,12 @@ void build_processing_queue(int const dependency_num_len[MAX_NODES],
                             int const nTargetCount,
                             int const dependency_num[MAX_NODES][MAX_NODES],
                             int processing_queue[MAX_NODES],
-                            int *processing_queue_len
+                            int *processing_queue_len,
+                            int const init_node_num
                             );
 
-void build_processing_queue_dfs(int curr_pos,
-                                int *temp_queue_len,
+void build_processing_queue_dfs(int const curr_pos,
+                                int *processing_queue_len,
                                 int processing_queue[MAX_NODES],
                                 int const dependency_num_len[MAX_NODES],
                                 int const nTargetCount,
@@ -76,8 +79,35 @@ void build_processing_queue_dfs(int curr_pos,
                                 int node_in_queue[MAX_NODES]
                                 );
 
-void display_processing_queue(int const processing_queue_len,
-                              int const processing_queue[MAX_NODES],
-                              target_t * const t
-                              );
+int check_dependencies(target_t * const t,
+                       int const nTargetCount,
+                       int const dependency_num[MAX_NODES][MAX_NODES],
+                       int const dependency_num_len[MAX_NODES],
+                       int const processing_queue[MAX_NODES],
+                       int const processing_queue_len
+                       );
+
+void build_processing_matrix(int const nTargetCount,
+                             target_t * const t,
+                             int processing_matrix[MAX_NODES][MAX_NODES],
+                             int processing_matrix_len[MAX_NODES],
+                             int const init_node_num,
+                             int const force_repeat   // 0 represents no, 1 represents '-B' becomes active
+                             );
+
+int build_processing_matrix_dfs(int const curr_pos,
+                                int processing_matrix_len[MAX_NODES],
+                                int processing_matrix[MAX_NODES][MAX_NODES],
+                                int const nTargetCount,
+                                target_t * const t,
+                                int level[MAX_NODES],
+                                int const force_repeat  // 0 represents no, 1 represents '-B' becomes active
+                                );
+
+// display the commands as the order of processing matrix. equal to '-n' function
+void display_processing_matrix(int const processing_matrix[MAX_NODES][MAX_NODES],
+                               target_t * const t,
+                               int const nTargetCount
+                               );
+
 #endif

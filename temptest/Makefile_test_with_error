@@ -1,0 +1,5 @@
+all: a.txt b.txt cal.o
+	echo 'make4061_test'
+
+cal.o: c.txt e.o
+	echo '233'

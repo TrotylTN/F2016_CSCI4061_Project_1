@@ -326,27 +326,18 @@ void show_targets_in_number(int const dependency_num_len[MAX_NODES],
     }
 }
 
+// build_processing_queue() may be trashed after completing the matrix part.
 void build_processing_queue(int const dependency_num_len[MAX_NODES],
                             int const nTargetCount,
                             int const dependency_num[MAX_NODES][MAX_NODES],
                             int processing_queue[MAX_NODES],
-                            int *processing_queue_len
+                            int *processing_queue_len,
+                            int const init_node_num
                             )
 {
-    //0 represents it in the queue, and 1 represents not 
-    int i = 0;
     int node_in_queue[MAX_NODES];
     memset(node_in_queue, 0, sizeof node_in_queue);
-    // for (i = 0; i < nTargetCount; i++)
-    // {
-    //     if (dependency_num_len[i] == 0)
-    //     {
-    //         // push nodes without any dependencies into the queue
-    //         node_in_queue[i] = 1;
-    //         processing_queue[processing_queue_len++] = i;
-    //     }
-    // }
-    build_processing_queue_dfs(0,
+    build_processing_queue_dfs(init_node_num,
                                processing_queue_len,
                                processing_queue,
                                dependency_num_len,
@@ -356,7 +347,7 @@ void build_processing_queue(int const dependency_num_len[MAX_NODES],
                                );
 }
 
-void build_processing_queue_dfs(int curr_pos,
+void build_processing_queue_dfs(int const curr_pos,
                                 int *processing_queue_len,
                                 int processing_queue[MAX_NODES],
                                 int const dependency_num_len[MAX_NODES],
@@ -385,14 +376,128 @@ void build_processing_queue_dfs(int curr_pos,
     processing_queue[(*processing_queue_len)++] = curr_pos;
 }
 
-void display_processing_queue(int const processing_queue_len,
-                              int const processing_queue[MAX_NODES],
-                              target_t * const t
-                              )
+// this function may be adjusted to match matrix after completing maxtrix part
+int check_dependencies(target_t * const t,
+                       int const nTargetCount,
+                       int const dependency_num[MAX_NODES][MAX_NODES],
+                       int const dependency_num_len[MAX_NODES],
+                       int const processing_queue[MAX_NODES],
+                       int const processing_queue_len
+                       )
 {
     int i = 0;
+    int j = 0;
+    int return_num = 0; //0 represents everthing OK, other represents at least one file lost
     for (i = 0; i < processing_queue_len; i++)
     {
-        printf("%s\n",t[processing_queue[i]].szCommand);
+        for (j = 0; j < t[processing_queue[i]].nDependencyCount; j++)
+        {
+            if (find_target(t[processing_queue[i]].szDependencies[j], t, nTargetCount) != -1)
+            {
+                // everything ok;
+            }
+            else
+            {
+                if (is_file_exist(t[processing_queue[i]].szDependencies[j]) != -1)
+                {
+                    // everthing ok;
+                }
+                else
+                {
+                    return_num++;
+                    fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[processing_queue[i]].szDependencies[j], t[processing_queue[i]].szTarget);
+                }
+            }
+        }
     }
+    return return_num; // return the count of missing files
+}
+
+void build_processing_matrix(int const nTargetCount,
+                             target_t * const t,
+                             int processing_matrix[MAX_NODES][MAX_NODES],
+                             int processing_matrix_len[MAX_NODES],
+                             int const init_node_num,
+                             int const force_repeat   // 0 represents no, 1 represents '-B' becomes active
+                             )
+{
+    int level[MAX_NODES]; //the max height of this point from the all the leaf nodes
+    memset(level, 0, sizeof level);
+    build_processing_matrix_dfs(init_node_num,
+                                processing_matrix_len,
+                                processing_matrix,
+                                nTargetCount,
+                                t,
+                                level,
+                                force_repeat
+                                );
+}
+
+// the returned int is the timestamp of current target. If it does not exist, return -1
+int build_processing_matrix_dfs(int const curr_pos,
+                                int processing_matrix_len[MAX_NODES],
+                                int processing_matrix[MAX_NODES][MAX_NODES],
+                                int const nTargetCount,
+                                target_t * const t,
+                                int level[MAX_NODES],
+                                int const force_repeat  // 0 represents no, 1 represents '-B' becomes active
+                                )
+{
+    int temp_timestamp = get_file_modification_time(t[curr_pos].szTarget);
+    int dependency_timestamp = 0x7fffffff;
+    int i = 0;
+    int k = 0;
+    char *temp_name;
+
+    for (i = 0; i < t[curr_pos].nDependencyCount; i++)
+    {
+        temp_name = t[curr_pos].szDependencies[i];
+        k = find_target(temp_name, t, nTargetCount); //look for the child target
+        if (k == -1)
+        {
+            // this is a source file
+            dependency_timestamp = get_file_modification_time(temp_name);
+            level[curr_pos] = max(level[curr_pos], 0);
+        }
+        else
+        {
+            // this is a target
+            dependency_timestamp = build_processing_matrix_dfs(k,
+                                                               processing_matrix_len,
+                                                               processing_matrix,
+                                                               nTargetCount,
+                                                               t,
+                                                               level,
+                                                               force_repeat
+                                                               );
+            level[curr_pos] = max(level[curr_pos], level[k] + 1);
+        }
+        // if the child source file/target is newer than curr_pos itself or one of them doesn't exist, mark temp_timestamp as -1 in order to re-compile
+        if ((dependency_timestamp > temp_timestamp) || (dependency_timestamp == -1))
+            temp_timestamp = -1;        
+    }
+    if (force_repeat || temp_timestamp == -1)
+    {
+        processing_matrix[level[curr_pos]][processing_matrix_len[level[curr_pos]]++] = curr_pos;
+    }
+    return temp_timestamp;
+}
+
+void display_processing_matrix(int const processing_matrix[MAX_NODES][MAX_NODES],
+                               target_t * const t,
+                               int const nTargetCount
+                               )
+{
+    int i = 0;
+    int j = 0;
+    int p = -1; // refer to prcessing_matrix[i][j]
+    for (i = 0; i < MAX_NODES; i++)
+        for (j = 0; j < MAX_NODES; j++)
+        {
+            if (processing_matrix[i][j] != -1)
+            {
+                p = processing_matrix[i][j];
+                printf("%s\n", t[p].szCommand);
+            }
+        }
 }
