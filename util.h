@@ -34,13 +34,13 @@ int compare_modification_time(char *, char *);
 
 //Build and run the project with given Makefile to see the contents.
 typedef struct target{
-	pid_t pid; //Pid of the process that is handling this target.
-	char szTarget[64]; //Target name
-	int nDependencyCount; //Number of dependencies
-	char szDependencies[10][64]; //Names of all the dependencies
-	char szCommand[256]; //Command that needs to be executed for this target
-	char **prog_args; //Command decomposed into different parts. Use this as arguments for execvp() function.
-	int nStatus; //Status of the target(Running, Finished etc. based on your implementation)
+    pid_t pid; //Pid of the process that is handling this target.
+    char szTarget[64]; //Target name
+    int nDependencyCount; //Number of dependencies
+    char szDependencies[10][64]; //Names of all the dependencies
+    char szCommand[256]; //Command that needs to be executed for this target
+    char **prog_args; //Command decomposed into different parts. Use this as arguments for execvp() function.
+    int nStatus; //Status of the target(Running, Finished etc. based on your implementation)
 }target_t;
 
 int find_target(char * lpszTargetName, target_t * const t, int const nTargetCount);
@@ -50,34 +50,34 @@ int makeargv(const char *s, const char *delimiters, char ***argvp);
 void freemakeargv(char **argv);
 
 void build_dependency_dag(target_t * const t, 
-						 int const nTargetCount,
-						 int dependency_num[MAX_NODES][MAX_NODES],
-						 int dependency_num_len[MAX_NODES]
-						 );
+                         int const nTargetCount,
+                         int dependency_num[MAX_NODES][MAX_NODES],
+                         int dependency_num_len[MAX_NODES]
+                         );
 
 void show_targets_in_number(int const dependency_num_len[MAX_NODES], 
-							int const nTargetCount, 
-							int const dependency_num[MAX_NODES][MAX_NODES]
-							);
+                            int const nTargetCount, 
+                            int const dependency_num[MAX_NODES][MAX_NODES]
+                            );
 
 void build_processing_queue(int const dependency_num_len[MAX_NODES],
-							int const nTargetCount,
-							int const dependency_num[MAX_NODES][MAX_NODES],
-							int processing_queue[MAX_NODES],
-							int *processing_queue_len
-							);
+                            int const nTargetCount,
+                            int const dependency_num[MAX_NODES][MAX_NODES],
+                            int processing_queue[MAX_NODES],
+                            int *processing_queue_len
+                            );
 
 void build_processing_queue_dfs(int curr_pos,
-								int *temp_queue_len,
-								int processing_queue[MAX_NODES],
-								int const dependency_num_len[MAX_NODES],
-								int const nTargetCount,
-								int const dependency_num[MAX_NODES][MAX_NODES],
-								int node_in_queue[MAX_NODES]
-								);
+                                int *temp_queue_len,
+                                int processing_queue[MAX_NODES],
+                                int const dependency_num_len[MAX_NODES],
+                                int const nTargetCount,
+                                int const dependency_num[MAX_NODES][MAX_NODES],
+                                int node_in_queue[MAX_NODES]
+                                );
 
 void display_processing_queue(int const processing_queue_len,
-							  int const processing_queue[MAX_NODES],
-							  target_t * const t
-							  );
+                              int const processing_queue[MAX_NODES],
+                              target_t * const t
+                              );
 #endif
