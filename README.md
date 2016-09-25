@@ -18,3 +18,8 @@ Sep. 24, 2016:
 3. Put timestamp comparing struct into DAG parse. Now our project can determine whether a target should be re-compile. Completed 'make4061 -n' function entirely.
 
 4. Completed methods for 'make4061 -B'.
+
+10.10pm:
+
+1. Completed almost all required functions
+2. Last task for us is to test, debug and re-check whether our project matches the requirements for full grade.

@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     extern int optind;
     extern char * optarg;
     int ch;
-    char * format = "f:hnB:";
+    char * format = "f:hnB";
     
     // Variables you'll want to use
     char szMakefile[64] = "Makefile";
@@ -59,6 +59,7 @@ int main(int argc, char **argv)
                 break;
             case 'B':
                     force_repeat = 1;
+                    // printf("\n\n!!!Please Force Run.!!!\n\n");
                     //Set flag which can be used later to handle this case.
                 break;
             case 'h':
@@ -100,6 +101,12 @@ int main(int argc, char **argv)
     /*
       INSERT YOUR CODE HERE
     */
+    if (find_target(szTarget, targets, nTargetCount) == -1)
+    {
+        fprintf(stderr, "Error: target '%s' does not exist.\n", szTarget);
+        return EXIT_FAILURE;
+    }
+
     int dependency_num[MAX_NODES][MAX_NODES];
     //dependency_num_len[i] is the number of other targets depended by targets[i]
     int dependency_num_len[MAX_NODES];
@@ -110,26 +117,26 @@ int main(int argc, char **argv)
     // show_targets_in_number(dependency_num_len, nTargetCount, dependency_num);
 
     //check all depended files exist
-    int processing_queue[MAX_NODES];
-    int processing_queue_len = 0;   // processing_queue may be trashed after completing matrix
-    memset(processing_queue, 0, sizeof processing_queue);
-    build_processing_queue(dependency_num_len, 
-                           nTargetCount, 
-                           dependency_num, 
-                           processing_queue,
-                           &processing_queue_len,
-                           0 // !!!Warning!!!: the default start node is 0, maybe change in further development
-                           );
-    if (check_dependencies(targets,
-                           nTargetCount,
-                           dependency_num,
-                           dependency_num_len,
-                           processing_queue,
-                           processing_queue_len) > 0)
-    {
-        fprintf(stderr, "Error: at least one depended file lost.\n");
-        return EXIT_FAILURE;
-    }
+    // int processing_queue[MAX_NODES];
+    // int processing_queue_len = 0;   // processing_queue may be trashed after completing matrix
+    // memset(processing_queue, 0, sizeof processing_queue);
+    // build_processing_queue(dependency_num_len, 
+    //                        nTargetCount, 
+    //                        dependency_num, 
+    //                        processing_queue,
+    //                        &processing_queue_len,
+    //                        0 // !!!Warning!!!: the default start node is 0, maybe change in further development
+    //                        );
+    // if (check_dependencies(targets,
+    //                        nTargetCount,
+    //                        dependency_num,
+    //                        dependency_num_len,
+    //                        processing_queue,
+    //                        processing_queue_len) > 0)
+    // {
+    //     fprintf(stderr, "Error: at least one depended file lost.\n");
+    //     return EXIT_FAILURE;
+    // }
     // for (i=0; i < processing_queue_len; i++)
     // {
     //     printf("%d, \n", processing_queue[i]);
@@ -143,7 +150,7 @@ int main(int argc, char **argv)
                             targets,
                             processing_matrix,
                             processing_matrix_len,
-                            0, // !!!Warning!!!: the default start node is 0, maybe change in further development
+                            find_target(szTarget, targets, nTargetCount),
                             force_repeat
                             );
     // int j = 0;
@@ -155,18 +162,35 @@ int main(int argc, char **argv)
     //     }
     //     printf("\n");
     // }
+    int lost_number = 0;
+    if ((lost_number = check_dependencies_by_matrix(targets,
+                                                    processing_matrix,
+                                                    processing_matrix_len,
+                                                    nTargetCount
+                                                    )) > 0)
+    {
+        fprintf(stderr, "Error: %d needed file(s) lost.\n", lost_number);
+        return EXIT_FAILURE;
+    }
 
-    /*
-        
-    */
+    int tot_steps = 0;
+    for (i = 0; i <= MAX_NODES; i++)
+    {
+        tot_steps += processing_matrix_len[i];
+    }
+    if (tot_steps == 0)
+    {
+        printf("All files are up-to-date.\n");
+    }
+
     if (donot_exec)
     {
         // '-n', just show
-        display_processing_matrix(processing_matrix, targets, nTargetCount);
+        display_processing_matrix(processing_matrix, targets, processing_matrix_len);
     }
     else
     {
-        //execute the compile commands
+        execute_commands_by_matrix(processing_matrix, targets, processing_matrix_len);
     }
 
     return EXIT_SUCCESS;

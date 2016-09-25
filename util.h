@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 // the following ifdef/def pair prevents us from having problems if 
 // we've included util.h in multiple places... it's a handy trick
@@ -62,30 +63,30 @@ void show_targets_in_number(int const dependency_num_len[MAX_NODES],
                             int const dependency_num[MAX_NODES][MAX_NODES]
                             );
 
-void build_processing_queue(int const dependency_num_len[MAX_NODES],
-                            int const nTargetCount,
-                            int const dependency_num[MAX_NODES][MAX_NODES],
-                            int processing_queue[MAX_NODES],
-                            int *processing_queue_len,
-                            int const init_node_num
-                            );
+// void build_processing_queue(int const dependency_num_len[MAX_NODES],
+//                             int const nTargetCount,
+//                             int const dependency_num[MAX_NODES][MAX_NODES],
+//                             int processing_queue[MAX_NODES],
+//                             int *processing_queue_len,
+//                             int const init_node_num
+//                             );
 
-void build_processing_queue_dfs(int const curr_pos,
-                                int *processing_queue_len,
-                                int processing_queue[MAX_NODES],
-                                int const dependency_num_len[MAX_NODES],
-                                int const nTargetCount,
-                                int const dependency_num[MAX_NODES][MAX_NODES],
-                                int node_in_queue[MAX_NODES]
-                                );
+// void build_processing_queue_dfs(int const curr_pos,
+//                                 int *processing_queue_len,
+//                                 int processing_queue[MAX_NODES],
+//                                 int const dependency_num_len[MAX_NODES],
+//                                 int const nTargetCount,
+//                                 int const dependency_num[MAX_NODES][MAX_NODES],
+//                                 int node_in_queue[MAX_NODES]
+//                                 );
 
-int check_dependencies(target_t * const t,
-                       int const nTargetCount,
-                       int const dependency_num[MAX_NODES][MAX_NODES],
-                       int const dependency_num_len[MAX_NODES],
-                       int const processing_queue[MAX_NODES],
-                       int const processing_queue_len
-                       );
+// int check_dependencies(target_t * const t,
+//                        int const nTargetCount,
+//                        int const dependency_num[MAX_NODES][MAX_NODES],
+//                        int const dependency_num_len[MAX_NODES],
+//                        int const processing_queue[MAX_NODES],
+//                        int const processing_queue_len
+//                        );
 
 void build_processing_matrix(int const nTargetCount,
                              target_t * const t,
@@ -107,7 +108,18 @@ int build_processing_matrix_dfs(int const curr_pos,
 // display the commands as the order of processing matrix. equal to '-n' function
 void display_processing_matrix(int const processing_matrix[MAX_NODES][MAX_NODES],
                                target_t * const t,
-                               int const nTargetCount
+                               int const processing_matrix_len[MAX_NODES]
                                );
+
+void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES],
+                                target_t * const t,
+                                int const processing_matrix_len[MAX_NODES]
+                                );
+
+int check_dependencies_by_matrix(target_t * const t,
+                                 int const processing_matrix[MAX_NODES][MAX_NODES],
+                                 int const processing_matrix_len[MAX_NODES],
+                                 int const nTargetCount
+                                 );
 
 #endif

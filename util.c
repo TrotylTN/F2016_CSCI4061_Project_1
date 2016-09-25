@@ -327,91 +327,91 @@ void show_targets_in_number(int const dependency_num_len[MAX_NODES],
 }
 
 // build_processing_queue() may be trashed after completing the matrix part.
-void build_processing_queue(int const dependency_num_len[MAX_NODES],
-                            int const nTargetCount,
-                            int const dependency_num[MAX_NODES][MAX_NODES],
-                            int processing_queue[MAX_NODES],
-                            int *processing_queue_len,
-                            int const init_node_num
-                            )
-{
-    int node_in_queue[MAX_NODES];
-    memset(node_in_queue, 0, sizeof node_in_queue);
-    build_processing_queue_dfs(init_node_num,
-                               processing_queue_len,
-                               processing_queue,
-                               dependency_num_len,
-                               nTargetCount,
-                               dependency_num,
-                               node_in_queue
-                               );
-}
+// void build_processing_queue(int const dependency_num_len[MAX_NODES],
+//                             int const nTargetCount,
+//                             int const dependency_num[MAX_NODES][MAX_NODES],
+//                             int processing_queue[MAX_NODES],
+//                             int *processing_queue_len,
+//                             int const init_node_num
+//                             )
+// {
+//     int node_in_queue[MAX_NODES];
+//     memset(node_in_queue, 0, sizeof node_in_queue);
+//     build_processing_queue_dfs(init_node_num,
+//                                processing_queue_len,
+//                                processing_queue,
+//                                dependency_num_len,
+//                                nTargetCount,
+//                                dependency_num,
+//                                node_in_queue
+//                                );
+// }
 
-void build_processing_queue_dfs(int const curr_pos,
-                                int *processing_queue_len,
-                                int processing_queue[MAX_NODES],
-                                int const dependency_num_len[MAX_NODES],
-                                int const nTargetCount,
-                                int const dependency_num[MAX_NODES][MAX_NODES],
-                                int node_in_queue[MAX_NODES]
-                                )
-{
-    int i = 0;
-    // printf("Here is %d\n", curr_pos);
-    for (i = 0; i < dependency_num_len[curr_pos]; i++)
-    {
-        if (node_in_queue[i] == 0)
-        {
-            build_processing_queue_dfs(dependency_num[curr_pos][i],
-                                       processing_queue_len,
-                                       processing_queue,
-                                       dependency_num_len,
-                                       nTargetCount,
-                                       dependency_num,
-                                       node_in_queue
-                                       );
-        }        
-    }
-    node_in_queue[curr_pos] = 1;
-    processing_queue[(*processing_queue_len)++] = curr_pos;
-}
+// void build_processing_queue_dfs(int const curr_pos,
+//                                 int *processing_queue_len,
+//                                 int processing_queue[MAX_NODES],
+//                                 int const dependency_num_len[MAX_NODES],
+//                                 int const nTargetCount,
+//                                 int const dependency_num[MAX_NODES][MAX_NODES],
+//                                 int node_in_queue[MAX_NODES]
+//                                 )
+// {
+//     int i = 0;
+//     // printf("Here is %d\n", curr_pos);
+//     for (i = 0; i < dependency_num_len[curr_pos]; i++)
+//     {
+//         if (node_in_queue[i] == 0)
+//         {
+//             build_processing_queue_dfs(dependency_num[curr_pos][i],
+//                                        processing_queue_len,
+//                                        processing_queue,
+//                                        dependency_num_len,
+//                                        nTargetCount,
+//                                        dependency_num,
+//                                        node_in_queue
+//                                        );
+//         }        
+//     }
+//     node_in_queue[curr_pos] = 1;
+//     processing_queue[(*processing_queue_len)++] = curr_pos;
+// }
 
-// this function may be adjusted to match matrix after completing maxtrix part
-int check_dependencies(target_t * const t,
-                       int const nTargetCount,
-                       int const dependency_num[MAX_NODES][MAX_NODES],
-                       int const dependency_num_len[MAX_NODES],
-                       int const processing_queue[MAX_NODES],
-                       int const processing_queue_len
-                       )
-{
-    int i = 0;
-    int j = 0;
-    int return_num = 0; //0 represents everthing OK, other represents at least one file lost
-    for (i = 0; i < processing_queue_len; i++)
-    {
-        for (j = 0; j < t[processing_queue[i]].nDependencyCount; j++)
-        {
-            if (find_target(t[processing_queue[i]].szDependencies[j], t, nTargetCount) != -1)
-            {
-                // everything ok;
-            }
-            else
-            {
-                if (is_file_exist(t[processing_queue[i]].szDependencies[j]) != -1)
-                {
-                    // everthing ok;
-                }
-                else
-                {
-                    return_num++;
-                    fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[processing_queue[i]].szDependencies[j], t[processing_queue[i]].szTarget);
-                }
-            }
-        }
-    }
-    return return_num; // return the count of missing files
-}
+// // this function may be adjusted to match matrix after completing maxtrix part
+// int check_dependencies(target_t * const t,
+//                        int const nTargetCount,
+//                        int const dependency_num[MAX_NODES][MAX_NODES],
+//                        int const dependency_num_len[MAX_NODES],
+//                        int const processing_queue[MAX_NODES],
+//                        int const processing_queue_len
+//                        )
+// {
+//     int i = 0;
+//     int j = 0;
+//     int return_num = 0; //0 represents everthing OK, other represents at least one file lost
+//     for (i = 0; i < processing_queue_len; i++)
+//     {
+//         for (j = 0; j < t[processing_queue[i]].nDependencyCount; j++)
+//         {
+//             if (find_target(t[processing_queue[i]].szDependencies[j], t, nTargetCount) != -1)
+//             {
+//                 // everything ok;
+//             }
+//             else
+//             {
+//                 if (is_file_exist(t[processing_queue[i]].szDependencies[j]) != -1)
+//                 {
+//                     // everthing ok;
+//                 }
+//                 else
+//                 {
+//                     return_num++;
+//                     fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[processing_queue[i]].szDependencies[j], t[processing_queue[i]].szTarget);
+//                 }
+//             }
+//         }
+//     }
+//     return return_num; // return the count of missing files
+// }
 
 void build_processing_matrix(int const nTargetCount,
                              target_t * const t,
@@ -485,19 +485,95 @@ int build_processing_matrix_dfs(int const curr_pos,
 
 void display_processing_matrix(int const processing_matrix[MAX_NODES][MAX_NODES],
                                target_t * const t,
-                               int const nTargetCount
+                               int const processing_matrix_len[MAX_NODES]
                                )
 {
     int i = 0;
     int j = 0;
     int p = -1; // refer to prcessing_matrix[i][j]
     for (i = 0; i < MAX_NODES; i++)
-        for (j = 0; j < MAX_NODES; j++)
+        for (j = 0; j < processing_matrix_len[i]; j++)
         {
-            if (processing_matrix[i][j] != -1)
+            p = processing_matrix[i][j];
+            printf("%s\n", t[p].szCommand);
+        }
+}
+
+void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES],
+                                target_t * const t,
+                                int const processing_matrix_len[MAX_NODES]
+                                )
+{
+    int i = 0;
+    int j = 0;
+    int p = -1;
+    int temp_pid = 0;
+    for (i = 0; i < MAX_NODES; i++)
+    {
+        for (j = 0; j < processing_matrix_len[i]; j++)
+        {
+            if (fork() == 0)
             {
+                // child
                 p = processing_matrix[i][j];
-                printf("%s\n", t[p].szCommand);
+                t[p].pid = getpid();
+                if (execvp(t[p].prog_args[0], t[p].prog_args) < 0)
+                {
+                    //fail to execute
+                    perror("error on exec");
+                    exit(0);
+                }
+            }
+            else
+            {
+                // parent, continue to next loop to fork next command
             }
         }
+        for (j = 0; j < processing_matrix_len[i]; j++)
+        {
+            p = processing_matrix[i][j];
+            wait(&t[p].pid);
+        }
+
+    }
+}
+
+int check_dependencies_by_matrix(target_t * const t,
+                                 int const processing_matrix[MAX_NODES][MAX_NODES],
+                                 int const processing_matrix_len[MAX_NODES],
+                                 int const nTargetCount
+                                 )
+{
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int p = -1; // temp var for matrix[i][j]
+    int return_num = 0; //0 represents everthing OK, other represents at least one file lost
+    for (i = 0; i < MAX_NODES; i++)
+    {
+        for (j = 0; j < processing_matrix_len[i]; j++)
+        {
+            p = processing_matrix[i][j];
+            for (k = 0; k < t[p].nDependencyCount; k++)
+            {
+                if (find_target(t[p].szDependencies[k], t, nTargetCount) != -1)
+                {
+                    // everything ok;
+                }
+                else
+                {
+                    if (is_file_exist(t[p].szDependencies[k]) != -1)
+                    {
+                        // everthing ok;
+                    }
+                    else
+                    {
+                        return_num++;
+                        fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[p].szDependencies[k], t[p].szTarget);
+                    }
+                }
+            }
+        }
+    }
+    return return_num; // return the count of missing files
 }
