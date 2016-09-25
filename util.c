@@ -434,7 +434,7 @@ void build_processing_matrix(int const nTargetCount,
 }
 
 // the returned int is the timestamp of current target. If it does not exist, return -1
-int build_processing_matrix_dfs(int const curr_pos,
+int build_processing_matrix_dfs(int const curr_pos, //curr_pos is the number of this target
                                 int processing_matrix_len[MAX_NODES],
                                 int processing_matrix[MAX_NODES][MAX_NODES],
                                 int const nTargetCount,
@@ -451,7 +451,7 @@ int build_processing_matrix_dfs(int const curr_pos,
 
     for (i = 0; i < t[curr_pos].nDependencyCount; i++)
     {
-        temp_name = t[curr_pos].szDependencies[i];
+        temp_name = t[curr_pos].szDependencies[i]; // temp_name is this dependency's name
         k = find_target(temp_name, t, nTargetCount); //look for the child target
         if (k == -1)
         {
@@ -517,7 +517,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                 // child
                 p = processing_matrix[i][j];
                 t[p].pid = getpid();
-                if (execvp(t[p].prog_args[0], t[p].prog_args) < 0)
+                if (execvp(t[p].prog_args[0], t[p].prog_args) != 0)
                 {
                     //fail to execute
                     perror("error on exec");
