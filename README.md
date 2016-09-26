@@ -1,8 +1,11 @@
+~~~
 ＊ CSci4061 F2016 Assignment 1
 ＊ login: zhou0745
 ＊ date: 10/04/2016
 ＊ name: Tiannan Zhou, full name2, full name3
-＊ id: 5232494, id for second name, id for third name */
+＊ id: 5232494, id for second name, id for third name
+~~~
+
 
 **How to compile the program.**
 
