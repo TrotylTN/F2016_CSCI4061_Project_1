@@ -30,6 +30,7 @@
 
 // This stuff is for easy file reading, and parsing the makefile and populating the data structure
 FILE * file_open(char*);
+int is_file_exist(char * lpszFileName);
 char * file_getline(char*, FILE*);
 int does_file_exist(char *);
 int get_file_modification_time(char *);
@@ -51,42 +52,6 @@ int parse(char * lpszFileName, target_t * const t);
 void show_targets(target_t * const t, int const nTargetCount);
 int makeargv(const char *s, const char *delimiters, char ***argvp);
 void freemakeargv(char **argv);
-
-void build_dependency_dag(target_t * const t, 
-                         int const nTargetCount,
-                         int dependency_num[MAX_NODES][MAX_NODES],
-                         int dependency_num_len[MAX_NODES]
-                         );
-
-void show_targets_in_number(int const dependency_num_len[MAX_NODES], 
-                            int const nTargetCount, 
-                            int const dependency_num[MAX_NODES][MAX_NODES]
-                            );
-
-// void build_processing_queue(int const dependency_num_len[MAX_NODES],
-//                             int const nTargetCount,
-//                             int const dependency_num[MAX_NODES][MAX_NODES],
-//                             int processing_queue[MAX_NODES],
-//                             int *processing_queue_len,
-//                             int const init_node_num
-//                             );
-
-// void build_processing_queue_dfs(int const curr_pos,
-//                                 int *processing_queue_len,
-//                                 int processing_queue[MAX_NODES],
-//                                 int const dependency_num_len[MAX_NODES],
-//                                 int const nTargetCount,
-//                                 int const dependency_num[MAX_NODES][MAX_NODES],
-//                                 int node_in_queue[MAX_NODES]
-//                                 );
-
-// int check_dependencies(target_t * const t,
-//                        int const nTargetCount,
-//                        int const dependency_num[MAX_NODES][MAX_NODES],
-//                        int const dependency_num_len[MAX_NODES],
-//                        int const processing_queue[MAX_NODES],
-//                        int const processing_queue_len
-//                        );
 
 void build_processing_matrix(int const nTargetCount,
                              target_t * const t,

@@ -1,25 +1,35 @@
-# CSCI4061_Project_1
-Project #1 of CSCI 4061, which will due at Oct 5 midnight. 
+/* CSci4061 F2016 Assignment 1
+* login: zhou0745
+* date: 10/04/2016
+* name: Tiannan Zhou, full name2, full name3
+* id: 5232494, id for second name, id for third name */
 
-Sep. 23, 2016:
+**How to compile the program.**
 
-7.50pm: 
+~~~
+make
+~~~
 
-Completed DAG analysis, building processing queue and "make4061 -n" function. by Tiannan.
+You just need to use GNU makefile to compile this project.
 
-Sep. 24, 2016:
+**Who did what on the program**
 
-5.55pm: 
+<TBD>
 
-1. Replaced the queue with a processing matrix in order to parallel-run commands in further development. Now our project can divided the targets into correct corresponding running sequences.
+**Syntax**
 
-2. Re-organized the algorithm for DAG parse.
+*Usage*
 
-3. Put timestamp comparing struct into DAG parse. Now our project can determine whether a target should be re-compile. Completed 'make4061 -n' function entirely.
+ `./make4061 [options] [target]` Options can be combined together and only single target is allowed.
 
-4. Completed methods for 'make4061 -B'.
+*Options*
 
-10.10pm:
+1. `-f filename`: filename will be the name of the makefile, otherwise the default name ’makefile’ is assumed.
 
-1. Completed almost all required functions
-2. Last task for us is to test, debug and re-check whether our project matches the requirements for full grade.
+2. `-n`: only display the commands it would run, but doesn't actually execute them.
+
+3. `-B`: Do not check timestamps for target and input and always re-compile.
+
+*Targets*
+
+You can use only single target which was defined in Makefile. If you assign a nonexistent specified target, make4061 will return an error message.

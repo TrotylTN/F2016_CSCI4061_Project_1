@@ -69,6 +69,11 @@ int main(int argc, char **argv)
         }
     }
 
+    if (is_file_exist(szMakefile) == -1) // Check the 
+    {
+        fprintf(stderr, "Error: file '%s' does not exist.\n", szMakefile);
+    }
+
     argc -= optind;
     argv += optind;
 
@@ -107,41 +112,6 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    int dependency_num[MAX_NODES][MAX_NODES];
-    //dependency_num_len[i] is the number of other targets depended by targets[i]
-    int dependency_num_len[MAX_NODES];
-    memset(dependency_num_len, 0, sizeof dependency_num_len);
-    memset(dependency_num, 0, sizeof dependency_num);
-    build_dependency_dag(targets, nTargetCount, dependency_num, dependency_num_len);
-
-    // show_targets_in_number(dependency_num_len, nTargetCount, dependency_num);
-
-    //check all depended files exist
-    // int processing_queue[MAX_NODES];
-    // int processing_queue_len = 0;   // processing_queue may be trashed after completing matrix
-    // memset(processing_queue, 0, sizeof processing_queue);
-    // build_processing_queue(dependency_num_len, 
-    //                        nTargetCount, 
-    //                        dependency_num, 
-    //                        processing_queue,
-    //                        &processing_queue_len,
-    //                        0 // !!!Warning!!!: the default start node is 0, maybe change in further development
-    //                        );
-    // if (check_dependencies(targets,
-    //                        nTargetCount,
-    //                        dependency_num,
-    //                        dependency_num_len,
-    //                        processing_queue,
-    //                        processing_queue_len) > 0)
-    // {
-    //     fprintf(stderr, "Error: at least one depended file lost.\n");
-    //     return EXIT_FAILURE;
-    // }
-    // for (i=0; i < processing_queue_len; i++)
-    // {
-    //     printf("%d, \n", processing_queue[i]);
-    // }
-
     int processing_matrix[MAX_NODES][MAX_NODES];
     int processing_matrix_len[MAX_NODES];
     memset(processing_matrix, -1, sizeof processing_matrix);
@@ -153,15 +123,7 @@ int main(int argc, char **argv)
                             find_target(szTarget, targets, nTargetCount),
                             force_repeat
                             );
-    // int j = 0;
-    // for (i = 0; i < 10; i++)
-    // {
-    //     for (j = 0; j < 10; j++)
-    //     {
-    //         printf("%d, ",processing_matrix[i][j]);
-    //     }
-    //     printf("\n");
-    // }
+
     int lost_number = 0;
     if ((lost_number = check_dependencies_by_matrix(targets,
                                                     processing_matrix,
@@ -174,13 +136,13 @@ int main(int argc, char **argv)
     }
 
     int tot_steps = 0;
-    for (i = 0; i <= MAX_NODES; i++)
+    for (i = 0; i < MAX_NODES; i++)
     {
         tot_steps += processing_matrix_len[i];
     }
     if (tot_steps == 0)
     {
-        printf("All files are up-to-date.\n");
+        fprintf(stderr, "make4061: all files needed by '%s' are up-to-date.\n", szTarget);
     }
 
     if (donot_exec)
@@ -195,16 +157,4 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
-/*
-For the test example, the matrix should be:
-5, 4, 2, -1, -1, -1, -1, -1, -1, -1, 
-3, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
--1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-*/
+

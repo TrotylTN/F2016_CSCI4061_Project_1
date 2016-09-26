@@ -279,140 +279,6 @@ void show_targets(target_t * const t, int const nTargetCount)
     }
 }
 
-void build_dependency_dag(target_t * const t, 
-                          int const nTargetCount,
-                          int dependency_num[MAX_NODES][MAX_NODES],
-                          int dependency_num_len[MAX_NODES]
-                          )
-{
-    int i = 0;
-    int j = 0;
-    int k = 0;
-    char *tempTargetName;
-
-    //translate the target name into number, -1 mean the dependency is not a target in makefile
-    for (i = 0; i < nTargetCount; i++)
-    {
-        for (j = 0; j < t[i].nDependencyCount; j++)
-        {
-            tempTargetName = t[i].szDependencies[j];
-            for (k = 0; k < nTargetCount; k++)
-            {
-                if (strcmp(tempTargetName, t[k].szTarget) == 0)
-                {
-                    dependency_num[i][dependency_num_len[i]++] = k;
-                    break;
-                }
-            }
-        }
-    }
-}
-
-void show_targets_in_number(int const dependency_num_len[MAX_NODES], 
-                            int const nTargetCount, 
-                            int const dependency_num[MAX_NODES][MAX_NODES]
-                            )
-{
-    int i = 0;
-    int j = 0;
-    for (i = 0; i < nTargetCount; i++)
-    {
-        printf("This node number: %d\nTotal connected nodes: %d\n", i, dependency_num_len[i]);
-        for (j = 0; j < dependency_num_len[i]; j++)
-        {
-            printf("%d, ", dependency_num[i][j]);
-        }
-        printf("\n\n");
-    }
-}
-
-// build_processing_queue() may be trashed after completing the matrix part.
-// void build_processing_queue(int const dependency_num_len[MAX_NODES],
-//                             int const nTargetCount,
-//                             int const dependency_num[MAX_NODES][MAX_NODES],
-//                             int processing_queue[MAX_NODES],
-//                             int *processing_queue_len,
-//                             int const init_node_num
-//                             )
-// {
-//     int node_in_queue[MAX_NODES];
-//     memset(node_in_queue, 0, sizeof node_in_queue);
-//     build_processing_queue_dfs(init_node_num,
-//                                processing_queue_len,
-//                                processing_queue,
-//                                dependency_num_len,
-//                                nTargetCount,
-//                                dependency_num,
-//                                node_in_queue
-//                                );
-// }
-
-// void build_processing_queue_dfs(int const curr_pos,
-//                                 int *processing_queue_len,
-//                                 int processing_queue[MAX_NODES],
-//                                 int const dependency_num_len[MAX_NODES],
-//                                 int const nTargetCount,
-//                                 int const dependency_num[MAX_NODES][MAX_NODES],
-//                                 int node_in_queue[MAX_NODES]
-//                                 )
-// {
-//     int i = 0;
-//     // printf("Here is %d\n", curr_pos);
-//     for (i = 0; i < dependency_num_len[curr_pos]; i++)
-//     {
-//         if (node_in_queue[i] == 0)
-//         {
-//             build_processing_queue_dfs(dependency_num[curr_pos][i],
-//                                        processing_queue_len,
-//                                        processing_queue,
-//                                        dependency_num_len,
-//                                        nTargetCount,
-//                                        dependency_num,
-//                                        node_in_queue
-//                                        );
-//         }        
-//     }
-//     node_in_queue[curr_pos] = 1;
-//     processing_queue[(*processing_queue_len)++] = curr_pos;
-// }
-
-// // this function may be adjusted to match matrix after completing maxtrix part
-// int check_dependencies(target_t * const t,
-//                        int const nTargetCount,
-//                        int const dependency_num[MAX_NODES][MAX_NODES],
-//                        int const dependency_num_len[MAX_NODES],
-//                        int const processing_queue[MAX_NODES],
-//                        int const processing_queue_len
-//                        )
-// {
-//     int i = 0;
-//     int j = 0;
-//     int return_num = 0; //0 represents everthing OK, other represents at least one file lost
-//     for (i = 0; i < processing_queue_len; i++)
-//     {
-//         for (j = 0; j < t[processing_queue[i]].nDependencyCount; j++)
-//         {
-//             if (find_target(t[processing_queue[i]].szDependencies[j], t, nTargetCount) != -1)
-//             {
-//                 // everything ok;
-//             }
-//             else
-//             {
-//                 if (is_file_exist(t[processing_queue[i]].szDependencies[j]) != -1)
-//                 {
-//                     // everthing ok;
-//                 }
-//                 else
-//                 {
-//                     return_num++;
-//                     fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[processing_queue[i]].szDependencies[j], t[processing_queue[i]].szTarget);
-//                 }
-//             }
-//         }
-//     }
-//     return return_num; // return the count of missing files
-// }
-
 void build_processing_matrix(int const nTargetCount,
                              target_t * const t,
                              int processing_matrix[MAX_NODES][MAX_NODES],
@@ -517,7 +383,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                 // child
                 p = processing_matrix[i][j];
                 t[p].pid = getpid();
-                if (execvp(t[p].prog_args[0], t[p].prog_args) < 0)
+                if (execvp(t[p].prog_args[0], t[p].prog_args) != 0)
                 {
                     //fail to execute
                     perror("error on exec");
@@ -531,6 +397,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
         }
         for (j = 0; j < processing_matrix_len[i]; j++)
         {
+            // waitting for completing all children processors
             p = processing_matrix[i][j];
             wait(&t[p].pid);
         }
