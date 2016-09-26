@@ -106,8 +106,6 @@ int main(int argc, char **argv)
     /*
       INSERT YOUR CODE HERE
     */
-
-    // check whether the new Makefile exists
     if (find_target(szTarget, targets, nTargetCount) == -1)
     {
         fprintf(stderr, "Error: target '%s' does not exist.\n", szTarget);
