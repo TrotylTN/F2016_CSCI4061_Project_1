@@ -2,11 +2,11 @@
 ＊ CSci4061 F2016 Assignment 1
 ＊ login: zhou0745
 ＊ date: 10/04/2016
-＊ name: Tiannan Zhou, full name2, full name3
-＊ id: 5232494, id for second name, id for third name
+＊ name: Tiannan Zhou, Annelies Odermann, Lidiya Dergacheva
+＊ id: 5232494, id for Annelies, id for Lidiya
 ~~~
 
-**How to compile the program.**
+***How to compile the program.***
 
 ~~~
 make
@@ -14,9 +14,7 @@ make
 
 You just need to use GNU makefile to compile this project.
 
-    
-
-**Who did what on the program**
+***Who did what on the program***
 * Tiannan Zhou
     * Completed the framework and algorithm part.
 * Annelies Odermann
@@ -24,9 +22,7 @@ You just need to use GNU makefile to compile this project.
 * Lidiya Dergacheva
     * TBD
 
-
-
-**Syntax**
+***Syntax***
 
 * Usage
 
