@@ -5,7 +5,6 @@
 ＊ name: Tiannan Zhou, full name2, full name3
 ＊ id: 5232494, id for second name, id for third name
 ~~~
-<br/>
 
 **How to compile the program.**
 
@@ -14,7 +13,8 @@ make
 ~~~
 
 You just need to use GNU makefile to compile this project.
-<br/>
+
+    
 
 **Who did what on the program**
 * Tiannan Zhou
@@ -23,7 +23,8 @@ You just need to use GNU makefile to compile this project.
     * TBD
 * Lidiya Dergacheva
     * TBD
-<br/>
+
+
 
 **Syntax**
 
@@ -33,11 +34,11 @@ You just need to use GNU makefile to compile this project.
 
 * Options
 
-1. `-f filename`: filename will be the name of the makefile, otherwise the default name ’makefile’ is assumed.
+    1. `-f filename`: filename will be the name of the makefile, otherwise the default name ’makefile’ is assumed.
 
-2. `-n`: only display the commands it would run, but doesn't actually execute them.
+    2. `-n`: only display the commands it would run, but doesn't actually execute them.
 
-3. `-B`: Do not check timestamps for target and input and always re-compile.
+    3. `-B`: Do not check timestamps for target and input and always re-compile.
 
 * Targets
 
