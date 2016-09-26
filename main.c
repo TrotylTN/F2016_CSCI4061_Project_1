@@ -69,11 +69,6 @@ int main(int argc, char **argv)
         }
     }
 
-    if (is_file_exist(szMakefile) == -1) // Check the 
-    {
-        fprintf(stderr, "Error: file '%s' does not exist.\n", szMakefile);
-    }
-
     argc -= optind;
     argv += optind;
 
