@@ -33,7 +33,7 @@ char* file_getline(char* buffer, FILE* fp) {
 //Return -1 if file does not exist
 int is_file_exist(char * lpszFileName)
 {
-    return access(lpszFileName, F_OK); 
+    return access(lpszFileName, F_OK);
 }
 
 int get_file_modification_time(char * lpszFileName)
@@ -44,7 +44,7 @@ int get_file_modification_time(char * lpszFileName)
         int nStat = stat(lpszFileName, &buf);
         return buf.st_mtime;
     }
-    
+ 
     return -1;
 }
 
@@ -161,7 +161,7 @@ int parse(char * lpszFileName, target_t * const t)
         return -1;
     }
 
-    while(file_getline(szLine, fp) != NULL) 
+    while(file_getline(szLine, fp) != NULL)
     {
         nLine++;
         // this loop will go through the given file, one line at a time
@@ -179,9 +179,9 @@ int parse(char * lpszFileName, target_t * const t)
         {
             lpszLine++;
         }
-        
+ 
         //skip if whitespace-only
-        if(strlen(lpszLine) <= 0) 
+        if(strlen(lpszLine) <= 0)
         {
             continue;
         }
@@ -198,7 +198,7 @@ int parse(char * lpszFileName, target_t * const t)
             }
 
             strcpy(pTarget->szCommand, lpszLine);
-            if (makeargv(pTarget->szCommand, " ", &prog_args) == -1) 
+            if (makeargv(pTarget->szCommand, " ", &prog_args) == -1)
             {
                 perror("Error parsing command line");
                 exit(EXIT_FAILURE);
@@ -209,7 +209,7 @@ int parse(char * lpszFileName, target_t * const t)
         }
         else    //Target
         {
-            //check : exist Syntax check 
+            //check : exist Syntax check
             if(strchr(lpszLine, ':') == NULL)
             {
                 fprintf(stderr, "%s: line:%d *** missing separator.  Stop.\n", lpszFileName, nLine);
@@ -263,11 +263,11 @@ void show_targets(target_t * const t, int const nTargetCount)
     for(i=0;i<nTargetCount;i++)
     {
         k = 0;
-        printf("%d. Target: %s  Status: %d\nCommand: %s\nDependency: ", i, t[i].szTarget, t[i].nStatus, t[i].szCommand); 
+        printf("%d. Target: %s  Status: %d\nCommand: %s\nDependency: ", i, t[i].szTarget, t[i].nStatus, t[i].szCommand);
 
         for(j=0;j<t[i].nDependencyCount;j++)
         {
-            printf("%s ", t[i].szDependencies[j]); 
+            printf("%s ", t[i].szDependencies[j]);
         }
         printf("\nDecomposition of command:\n\t");
         while (t[i].prog_args[k] != NULL) {
@@ -340,7 +340,7 @@ int build_processing_matrix_dfs(int const curr_pos,
         }
         // if the child source file/target is newer than curr_pos itself or one of them doesn't exist, mark temp_timestamp as -1 in order to re-compile
         if ((dependency_timestamp > temp_timestamp) || (dependency_timestamp == -1))
-            temp_timestamp = -1;        
+            temp_timestamp = -1; 
     }
     if (force_repeat || temp_timestamp == -1)
     {
