@@ -78,7 +78,45 @@ int main(int argc, char **argv)
     argc -= optind;
     argv += optind;
 
-    if(argc > 1)
+    int targetsNum = 0;
+    char specifiedTarget[64] = "";
+
+    if(argc > 0)
+    {
+        strcpy(specifiedTarget, argv[0]);
+        targetsNum++;
+    }
+    argc --;
+    argv ++;
+    // fprintf(stderr, "take the target successfully\n");
+    optind = 0;
+    // get rest options
+    while((ch = getopt(argc, argv, format)) != -1) 
+    {
+        switch(ch) 
+        {
+            case 'f':
+                strcpy(szMakefile, strdup(optarg));
+                break;
+            case 'n':
+                    donot_exec = 1;
+                break;
+            case 'B':
+                    force_repeat = 1;
+                    // printf("\n\n!!!Please Force Run.!!!\n\n");
+                    //Set flag which can be used later to handle this case.
+                break;
+            case 'h':
+            default:
+                show_error_message(argv[0]);
+                exit(1);
+        }
+    }
+    
+    argc -= optind;
+    argv += optind;
+
+    if(argc > 0)
     {
         show_error_message(argv[0]);
         return EXIT_FAILURE;
@@ -90,16 +128,18 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    //Setting Targetname
-    //if target is not set, set it to default (first target from makefile)
-    if(argc == 1)
-    {
-        strcpy(szTarget, argv[0]);
-    }
-    else
+    if (strcmp(specifiedTarget, "") == 0)
     {
         strcpy(szTarget, targets[0].szTarget);
     }
+    else
+    {
+        strcpy(szTarget, specifiedTarget);
+    }
+
+
+    //Setting Targetname
+    //if target is not set, set it to default (first target from makefile)
 
     // show_targets(targets, nTargetCount);
 
