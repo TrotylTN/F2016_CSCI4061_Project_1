@@ -423,18 +423,8 @@ int check_dependencies_by_matrix(target_t * const t,
             p = processing_matrix[i][j];
             for (k = 0; k < t[p].nDependencyCount; k++)
             {
-                if (find_target(t[p].szDependencies[k], t, nTargetCount) != -1)
+                if (find_target(t[p].szDependencies[k], t, nTargetCount) == -1 && is_file_exist(t[p].szDependencies[k]) == -1)
                 {
-                    // everything ok;
-                }
-                else
-                {
-                    if (is_file_exist(t[p].szDependencies[k]) != -1)
-                    {
-                        // everthing ok;
-                    }
-                    else
-                    {
                         return_num++;
                         fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[p].szDependencies[k], t[p].szTarget);
                     }
