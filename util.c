@@ -415,7 +415,7 @@ int check_dependencies_by_matrix(target_t * const t,
     int j = 0;
     int k = 0;
     int p = -1; // temp var for matrix[i][j]
-    int return_num = 0; //0 represents everthing OK, other represents at least one file lost
+    int files_lost = 0;
     for (node = 0; node < MAX_NODES; node++)
     {
         for (j = 0; j < processing_matrix_len[node]; j++)
@@ -425,13 +425,13 @@ int check_dependencies_by_matrix(target_t * const t,
             {
                 if (find_target(t[p].szDependencies[k], t, nTargetCount) == -1 && is_file_exist(t[p].szDependencies[k]) == -1)
                 {
-                        return_num++;
+                        files_lost++;
                         fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[p].szDependencies[k], t[p].szTarget);
                     }
                 }
             }
         }
     }
-    return return_num; // return the count of missing files
+    return files_lost;
 }
 
