@@ -444,3 +444,4 @@ int check_dependencies_by_matrix(target_t * const t,
     }
     return return_num; // return the count of missing files
 }
+
