@@ -1,3 +1,9 @@
+/* CSci4061 F2016 Assignment 1
+ * login: cselabs login name (login used to submit)
+ * date: 09/27/16
+ * name: Tiannan Zhou, Annelies Odermann, Lidiya Dergacheva
+ * id: 5232494, 4740784, id for Lidiya */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
