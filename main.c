@@ -1,3 +1,9 @@
+/* CSci4061 F2016 Assignment 1
+ * login: cselabs login name (login used to submit)
+ * date: 09/27/16
+ * name: Tiannan Zhou, Annelies Odermann, Lidiya Dergacheva
+ * id: 5232494(zhou0745), 4740784(oderm008), 4515805 (derg0004) */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -72,7 +78,45 @@ int main(int argc, char **argv)
     argc -= optind;
     argv += optind;
 
-    if(argc > 1)
+    int targetsNum = 0;
+    char specifiedTarget[64] = "";
+
+    if(argc > 0)
+    {
+        strcpy(specifiedTarget, argv[0]);
+        targetsNum++;
+    }
+    argc --;
+    argv ++;
+    // fprintf(stderr, "take the target successfully\n");
+    optind = 0;
+    // get rest options
+    while((ch = getopt(argc, argv, format)) != -1) 
+    {
+        switch(ch) 
+        {
+            case 'f':
+                strcpy(szMakefile, strdup(optarg));
+                break;
+            case 'n':
+                    donot_exec = 1;
+                break;
+            case 'B':
+                    force_repeat = 1;
+                    // printf("\n\n!!!Please Force Run.!!!\n\n");
+                    //Set flag which can be used later to handle this case.
+                break;
+            case 'h':
+            default:
+                show_error_message(argv[0]);
+                exit(1);
+        }
+    }
+    
+    argc -= optind;
+    argv += optind;
+
+    if(argc > 0)
     {
         show_error_message(argv[0]);
         return EXIT_FAILURE;
@@ -84,23 +128,25 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    //Setting Targetname
-    //if target is not set, set it to default (first target from makefile)
-    if(argc == 1)
-    {
-        strcpy(szTarget, argv[0]);
-    }
-    else
+    if (strcmp(specifiedTarget, "") == 0)
     {
         strcpy(szTarget, targets[0].szTarget);
     }
+    else
+    {
+        strcpy(szTarget, specifiedTarget);
+    }
+
+
+    //Setting Targetname
+    //if target is not set, set it to default (first target from makefile)
 
     // show_targets(targets, nTargetCount);
 
-    //Now, the file has been parsed and the targets have been named. You'll now want to check all dependencies (whether they are available targets or files) and then execute the target that was specified on the command line, along with their dependencies, etc. Else if no target is mentioned then build the first target found in Makefile.
-    /*
-      INSERT YOUR CODE HERE
-    */
+    //Now, the file has been parsed and the targets have been named. You'll now want to check all dependencies 
+    //(whether they are available targets or files) and then execute the target that was specified on the command line, 
+    //along with their dependencies, etc. Else if no target is mentioned then build the first target found in Makefile.
+    
     if (find_target(szTarget, targets, nTargetCount) == -1)
     {
         fprintf(stderr, "Error: target '%s' does not exist.\n", szTarget);
