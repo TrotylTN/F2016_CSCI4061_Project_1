@@ -411,16 +411,16 @@ int check_dependencies_by_matrix(target_t * const t,
                                  int const nTargetCount
                                  )
 {
-    int i = 0;
+    int node = 0;
     int j = 0;
     int k = 0;
     int p = -1; // temp var for matrix[i][j]
     int return_num = 0; //0 represents everthing OK, other represents at least one file lost
-    for (i = 0; i < MAX_NODES; i++)
+    for (node = 0; node < MAX_NODES; node++)
     {
-        for (j = 0; j < processing_matrix_len[i]; j++)
+        for (j = 0; j < processing_matrix_len[node]; j++)
         {
-            p = processing_matrix[i][j];
+            p = processing_matrix[node][j];
             for (k = 0; k < t[p].nDependencyCount; k++)
             {
                 if (find_target(t[p].szDependencies[k], t, nTargetCount) == -1 && is_file_exist(t[p].szDependencies[k]) == -1)
