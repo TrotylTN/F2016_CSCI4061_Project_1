@@ -1,5 +1,8 @@
 # Untracked files:
 
+# executable
+make4061
+
 .*
 !.gitignore
 
