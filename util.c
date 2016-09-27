@@ -425,9 +425,8 @@ int check_dependencies_by_matrix(target_t * const t,
             {
                 if (find_target(t[p].szDependencies[k], t, nTargetCount) == -1 && is_file_exist(t[p].szDependencies[k]) == -1)
                 {
-                        files_lost++;
-                        fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[p].szDependencies[k], t[p].szTarget);
-                    }
+                    files_lost++;
+                    fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[p].szDependencies[k], t[p].szTarget);
                 }
             }
         }
