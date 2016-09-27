@@ -370,18 +370,18 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                                 int const processing_matrix_len[MAX_NODES]
                                 )
 {
-    int i = 0;
+    int node = 0;
     int j = 0;
     int p = -1;
     int temp_pid = 0;
-    for (i = 0; i < MAX_NODES; i++)
+    for (node = 0; node < MAX_NODES; node++)
     {
-        for (j = 0; j < processing_matrix_len[i]; j++)
+        for (j = 0; j < processing_matrix_len[node]; j++)
         {
             if (fork() == 0)
             {
                 // child
-                p = processing_matrix[i][j];
+                p = processing_matrix[node][j];
                 t[p].pid = getpid();
                 if (execvp(t[p].prog_args[0], t[p].prog_args) != 0)
                 {
@@ -395,10 +395,10 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                 // parent, continue to next loop to fork next command
             }
         }
-        for (j = 0; j < processing_matrix_len[i]; j++)
+        for (j = 0; j < processing_matrix_len[node]; j++)
         {
             // waitting for completing all children processors
-            p = processing_matrix[i][j];
+            p = processing_matrix[node][j];
             wait(&t[p].pid);
         }
 
