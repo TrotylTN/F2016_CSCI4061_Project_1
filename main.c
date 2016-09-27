@@ -103,10 +103,10 @@ int main(int argc, char **argv)
 
     // show_targets(targets, nTargetCount);
 
-    //Now, the file has been parsed and the targets have been named. You'll now want to check all dependencies (whether they are available targets or files) and then execute the target that was specified on the command line, along with their dependencies, etc. Else if no target is mentioned then build the first target found in Makefile.
-    /*
-      INSERT YOUR CODE HERE
-    */
+    //Now, the file has been parsed and the targets have been named. You'll now want to check all dependencies 
+    //(whether they are available targets or files) and then execute the target that was specified on the command line, 
+    //along with their dependencies, etc. Else if no target is mentioned then build the first target found in Makefile.
+    
     if (find_target(szTarget, targets, nTargetCount) == -1)
     {
         fprintf(stderr, "Error: target '%s' does not exist.\n", szTarget);
