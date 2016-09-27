@@ -3,7 +3,7 @@
 ＊ login: zhou0745
 ＊ date: 10/04/2016
 ＊ name: Tiannan Zhou, Annelies Odermann, Lidiya Dergacheva
-＊ id: 5232494(xhou0745), 4740784 (oderm008), 4515808 (derg0004s)
+＊ id: 5232494(xhou0745), 4740784 (oderm008), 4515808 (derg0004)
 ~~~
 
 **How to compile the program.**
