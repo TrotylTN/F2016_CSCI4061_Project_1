@@ -3,7 +3,7 @@
 ＊ login: zhou0745
 ＊ date: 10/04/2016
 ＊ name: Tiannan Zhou, Annelies Odermann, Lidiya Dergacheva
-＊ id: 5232494, id for Annelies, id for Lidiya
+＊ id: 5232494, 4740784, id for Lidiya
 ~~~
 
 **How to compile the program.**
