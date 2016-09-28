@@ -56,23 +56,10 @@ int compare_modification_time(char * fileName1, char * fileName2)
 
 //    printf("%s - %d  :  %s - %d\n", lpsz1, nTime1, lpsz2, nTime2);
 
-    if(nTime1 == -1 || nTime2 == -1)
-    {
-        return -1;
-    }
-
-    if(nTime1 == nTime2)
-    {
-        return 0;
-    }
-    else if(nTime1 > nTime2)
-    {
-        return 1;
-    }
-    else
-    {
-        return 2;
-    }
+    if(nTime1 == -1 || nTime2 == -1) return -1;
+    if(nTime1 == nTime2) return 0;
+    if(nTime1 > nTime2) return 1;
+    return 2;
 }
 
 // makeargv
@@ -128,8 +115,8 @@ void freemakeargv(char **argv) {
 // Used to find the index of target with targetName = lpszTargetName from the list of targets "t"
 int find_target(char * lpszTargetName, target_t * const t, int const nTargetCount)
 {
-    int i=0;
-    for(i=0;i<nTargetCount;i++)
+    int i = 0;
+    for(i = 0; i < nTargetCount; i++)
     {
         if(strcmp(lpszTargetName, t[i].szTarget) == 0)
         {
@@ -257,15 +244,15 @@ int parse(char * lpszFileName, target_t * const t)
 // Use prog_args as arguments for execvp()
 void show_targets(target_t * const t, int const nTargetCount)
 {
-    int i=0;
-    int j=0;
-    int k=0;
-    for(i=0;i<nTargetCount;i++)
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    for(i = 0; i < nTargetCount; i++)
     {
         k = 0;
         printf("%d. Target: %s  Status: %d\nCommand: %s\nDependency: ", i, t[i].szTarget, t[i].nStatus, t[i].szCommand);
 
-        for(j=0;j<t[i].nDependencyCount;j++)
+        for(j = 0; j < t[i].nDependencyCount; j++)
         {
             printf("%s ", t[i].szDependencies[j]);
         }
@@ -389,10 +376,6 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                     perror("error on exec");
                     exit(0);
                 }
-            }
-            else
-            {
-                // parent, continue to next loop to fork next command
             }
         }
         for (j = 0; j < processing_matrix_len[node]; j++)
