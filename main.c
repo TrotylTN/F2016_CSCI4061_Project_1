@@ -55,6 +55,7 @@ int main(int argc, char **argv)
     int donot_exec = 0; //1 represents '-n' becomes active
     while((ch = getopt(argc, argv, format)) != -1) 
     {
+        // fprintf(stderr, "%c\n", ch);        
         switch(ch) 
         {
             case 'f':
@@ -65,8 +66,6 @@ int main(int argc, char **argv)
                 break;
             case 'B':
                     force_repeat = 1;
-                    // printf("\n\n!!!Please Force Run.!!!\n\n");
-                    //Set flag which can be used later to handle this case.
                 break;
             case 'h':
             default:
@@ -74,49 +73,27 @@ int main(int argc, char **argv)
                 exit(1);
         }
     }
-
-    argc -= optind;
-    argv += optind;
 
     int targetsNum = 0;
     char specifiedTarget[64] = "";
-
-    if(argc > 0)
+    for (i = 1; i < argc; i++)
     {
-        strcpy(specifiedTarget, argv[0]);
-        targetsNum++;
-    }
-    argc --;
-    argv ++;
-    // fprintf(stderr, "take the target successfully\n");
-    optind = 0;
-    // get rest options
-    while((ch = getopt(argc, argv, format)) != -1) 
-    {
-        switch(ch) 
+        if (argv[i][0] != '-')
         {
-            case 'f':
-                strcpy(szMakefile, strdup(optarg));
-                break;
-            case 'n':
-                    donot_exec = 1;
-                break;
-            case 'B':
-                    force_repeat = 1;
-                    // printf("\n\n!!!Please Force Run.!!!\n\n");
-                    //Set flag which can be used later to handle this case.
-                break;
-            case 'h':
-            default:
-                show_error_message(argv[0]);
-                exit(1);
+            targetsNum++;
+            strcpy(specifiedTarget, argv[i]);
+        }
+        else
+        {
+            if (argv[i][1] == 'f')
+                i++;
+            //if '-f' option appears, ignore the next arg
         }
     }
-    
-    argc -= optind;
-    argv += optind;
 
-    if(argc > 0)
+    // fprintf(stderr, "take the target successfully\n");
+
+    if(targetsNum > 1)
     {
         show_error_message(argv[0]);
         return EXIT_FAILURE;
@@ -128,7 +105,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    if (strcmp(specifiedTarget, "") == 0)
+    if (targetsNum == 0)
     {
         strcpy(szTarget, targets[0].szTarget);
     }
