@@ -32,7 +32,6 @@
 FILE * file_open(char*);
 int is_file_exist(char * lpszFileName);
 char * file_getline(char*, FILE*);
-int does_file_exist(char *);
 int get_file_modification_time(char *);
 int compare_modification_time(char *, char *);
 

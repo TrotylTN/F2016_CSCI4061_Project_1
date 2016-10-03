@@ -20,7 +20,7 @@ You just need to use GNU makefile to compile this project.
 * Annelies Odermann
     * TBD
 * Lidiya Dergacheva
-    * TBD
+    * Reviewed the code and added comments.
 
 **Syntax**
 

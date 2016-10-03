@@ -279,6 +279,7 @@ void show_targets(target_t * const t, int const nTargetCount)
     }
 }
 
+// using DFS to pre-process the execution sequences matrix.
 void build_processing_matrix(int const nTargetCount,
                              target_t * const t,
                              int processing_matrix[MAX_NODES][MAX_NODES],
@@ -299,6 +300,7 @@ void build_processing_matrix(int const nTargetCount,
                                 );
 }
 
+// the DFS algorithm using to generate the matrix
 // the returned int is the timestamp of current target. If it does not exist, return -1
 int build_processing_matrix_dfs(int const curr_pos,
                                 int processing_matrix_len[MAX_NODES],
@@ -349,6 +351,7 @@ int build_processing_matrix_dfs(int const curr_pos,
     return temp_timestamp;
 }
 
+// debug tools, also using to display the ordered commands in the matrix
 void display_processing_matrix(int const processing_matrix[MAX_NODES][MAX_NODES],
                                target_t * const t,
                                int const processing_matrix_len[MAX_NODES]
@@ -365,6 +368,7 @@ void display_processing_matrix(int const processing_matrix[MAX_NODES][MAX_NODES]
         }
 }
 
+// Execute all the commands in the matrix.
 void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES],
                                 target_t * const t,
                                 int const processing_matrix_len[MAX_NODES]
@@ -405,6 +409,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
     }
 }
 
+// check whether all files needed exist.
 int check_dependencies_by_matrix(target_t * const t,
                                  int const processing_matrix[MAX_NODES][MAX_NODES],
                                  int const processing_matrix_len[MAX_NODES],

@@ -82,6 +82,7 @@ int main(int argc, char **argv)
         {
             targetsNum++;
             strcpy(specifiedTarget, argv[i]);
+            // count Targets and record the target appeared
         }
         else
         {
@@ -90,8 +91,6 @@ int main(int argc, char **argv)
             //if '-f' option appears, ignore the next arg
         }
     }
-
-    // fprintf(stderr, "take the target successfully\n");
 
     if(targetsNum > 1)
     {
@@ -105,6 +104,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    // if no specific target, using the first target in the file
     if (targetsNum == 0)
     {
         strcpy(szTarget, targets[0].szTarget);
@@ -124,6 +124,7 @@ int main(int argc, char **argv)
     //(whether they are available targets or files) and then execute the target that was specified on the command line, 
     //along with their dependencies, etc. Else if no target is mentioned then build the first target found in Makefile.
     
+    // if the initial target doesn't exist, halt the program. 
     if (find_target(szTarget, targets, nTargetCount) == -1)
     {
         fprintf(stderr, "Error: target '%s' does not exist.\n", szTarget);
@@ -134,6 +135,7 @@ int main(int argc, char **argv)
     int processing_matrix_len[MAX_NODES];
     memset(processing_matrix, -1, sizeof processing_matrix);
     memset(processing_matrix_len, 0, sizeof processing_matrix_len);
+    // build the sequences matrix, targets in the same layer means they can be execute simultaneously.
     build_processing_matrix(nTargetCount,
                             targets,
                             processing_matrix,
@@ -143,6 +145,7 @@ int main(int argc, char **argv)
                             );
 
     int lost_number = 0;
+    // count targets which are needed but do not exist
     if ((lost_number = check_dependencies_by_matrix(targets,
                                                     processing_matrix,
                                                     processing_matrix_len,
@@ -153,6 +156,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    // count the total stps
     int tot_steps = 0;
     for (i = 0; i < MAX_NODES; i++)
     {
@@ -160,16 +164,18 @@ int main(int argc, char **argv)
     }
     if (tot_steps == 0)
     {
+        //already up-to-date
         fprintf(stderr, "make4061: all files needed by '%s' are up-to-date.\n", szTarget);
     }
 
     if (donot_exec)
     {
-        // '-n', just show
+        // '-n', just show the commands and do not execute them
         display_processing_matrix(processing_matrix, targets, processing_matrix_len);
     }
     else
     {
+        // run!
         execute_commands_by_matrix(processing_matrix, targets, processing_matrix_len);
     }
 
