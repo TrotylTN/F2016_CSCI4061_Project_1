@@ -8,4 +8,4 @@ util.o: util.c util.h
 	gcc -c util.c
 
 clean:
-	rm make4061 *.o
+	rm make4061 main.o util.o
