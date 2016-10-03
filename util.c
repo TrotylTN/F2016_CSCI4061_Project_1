@@ -358,7 +358,7 @@ int build_processing_matrix_dfs(int const curr_pos,
     }
     if (force_repeat || temp_timestamp == -1)
     {
-        if (not_in_matrix(curr_pos, processing_matrix))
+        if (not_in_matrix(curr_pos, processing_matrix)) // if the target is already in the matrix, we ignore it and return the timestamp directly.
         {
             processing_matrix[level[curr_pos]][processing_matrix_len[level[curr_pos]]++] = curr_pos;
         }
