@@ -386,6 +386,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
             {
                 // child
                 p = processing_matrix[i][j];
+                fprintf(stderr, "%s\n", t[p].szCommand);
                 t[p].pid = getpid();
                 if (execvp(t[p].prog_args[0], t[p].prog_args) != 0)
                 {
