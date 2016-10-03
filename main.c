@@ -165,7 +165,7 @@ int main(int argc, char **argv)
     if (tot_steps == 0)
     {
         //already up-to-date
-        fprintf(stderr, "make4061: all files needed by '%s' are up-to-date.\n", szTarget);
+        fprintf(stderr, "make4061: '%s' is up-to-date.\n", szTarget);
     }
 
     if (donot_exec)
