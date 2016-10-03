@@ -300,6 +300,18 @@ void build_processing_matrix(int const nTargetCount,
                                 );
 }
 
+// Consider whether the target is already in the matrix
+int not_in_matrix(int curr_pos, int processing_matrix[MAX_NODES][MAX_NODES])
+{
+    int i = 0;
+    int j = 0;
+    for (i = 0; i < MAX_NODES; i++)
+        for (j = 0; j < MAX_NODES; j++)
+            if (processing_matrix[i][j] == curr_pos)
+                return 0;
+    return 1;
+}
+
 // the DFS algorithm using to generate the matrix
 // the returned int is the timestamp of current target. If it does not exist, return -1
 int build_processing_matrix_dfs(int const curr_pos,
@@ -346,7 +358,10 @@ int build_processing_matrix_dfs(int const curr_pos,
     }
     if (force_repeat || temp_timestamp == -1)
     {
-        processing_matrix[level[curr_pos]][processing_matrix_len[level[curr_pos]]++] = curr_pos;
+        if (not_in_matrix(curr_pos, processing_matrix))
+        {
+            processing_matrix[level[curr_pos]][processing_matrix_len[level[curr_pos]]++] = curr_pos;
+        }
     }
     return temp_timestamp;
 }
