@@ -2,6 +2,7 @@
 
 # executable
 make4061
+make4061_exe
 
 .*
 !.gitignore
