@@ -1,6 +1,6 @@
 /* CSci4061 F2016 Assignment 1
- * login: cselabs login name (login used to submit)
- * date: 09/27/16
+ * login: zhou0745
+ * date: 10/03/16
  * name: Tiannan Zhou, Annelies Odermann, Lidiya Dergacheva
  * id: 5232494(zhou0745), 4740784(oderm008), 4515805 (derg0004) */
 
