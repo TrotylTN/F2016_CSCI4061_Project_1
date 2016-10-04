@@ -1,6 +1,6 @@
 /* CSci4061 F2016 Assignment 1
- * login: cselabs login name (login used to submit)
- * date: 09/27/16
+ * login: zhou0745
+ * date: 10/03/16
  * name: Tiannan Zhou, Annelies Odermann, Lidiya Dergacheva
  * id: 5232494(zhou0745), 4740784(oderm008), 4515805 (derg0004) */
 
@@ -55,6 +55,7 @@ int main(int argc, char **argv)
     int donot_exec = 0; //1 represents '-n' becomes active
     while((ch = getopt(argc, argv, format)) != -1) 
     {
+        // fprintf(stderr, "%c\n", ch);        
         switch(ch) 
         {
             case 'f':
@@ -65,8 +66,6 @@ int main(int argc, char **argv)
                 break;
             case 'B':
                     force_repeat = 1;
-                    // printf("\n\n!!!Please Force Run.!!!\n\n");
-                    //Set flag which can be used later to handle this case.
                 break;
             case 'h':
             default:
@@ -74,49 +73,26 @@ int main(int argc, char **argv)
                 exit(1);
         }
     }
-
-    argc -= optind;
-    argv += optind;
 
     int targetsNum = 0;
     char specifiedTarget[64] = "";
-
-    if(argc > 0)
+    for (i = 1; i < argc; i++)
     {
-        strcpy(specifiedTarget, argv[0]);
-        targetsNum++;
-    }
-    argc --;
-    argv ++;
-    // fprintf(stderr, "take the target successfully\n");
-    optind = 0;
-    // get rest options
-    while((ch = getopt(argc, argv, format)) != -1) 
-    {
-        switch(ch) 
+        if (argv[i][0] != '-')
         {
-            case 'f':
-                strcpy(szMakefile, strdup(optarg));
-                break;
-            case 'n':
-                    donot_exec = 1;
-                break;
-            case 'B':
-                    force_repeat = 1;
-                    // printf("\n\n!!!Please Force Run.!!!\n\n");
-                    //Set flag which can be used later to handle this case.
-                break;
-            case 'h':
-            default:
-                show_error_message(argv[0]);
-                exit(1);
+            targetsNum++;
+            strcpy(specifiedTarget, argv[i]);
+            // count Targets and record the target appeared
+        }
+        else
+        {
+            if (argv[i][1] == 'f')
+                i++;
+            //if '-f' option appears, ignore the next arg
         }
     }
-    
-    argc -= optind;
-    argv += optind;
 
-    if(argc > 0)
+    if(targetsNum > 1)
     {
         show_error_message(argv[0]);
         return EXIT_FAILURE;
@@ -128,7 +104,8 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    if (strcmp(specifiedTarget, "") == 0)
+    // if no specific target, using the first target in the file
+    if (targetsNum == 0)
     {
         strcpy(szTarget, targets[0].szTarget);
     }
@@ -147,6 +124,7 @@ int main(int argc, char **argv)
     //(whether they are available targets or files) and then execute the target that was specified on the command line, 
     //along with their dependencies, etc. Else if no target is mentioned then build the first target found in Makefile.
     
+    // if the initial target doesn't exist, halt the program. 
     if (find_target(szTarget, targets, nTargetCount) == -1)
     {
         fprintf(stderr, "Error: target '%s' does not exist.\n", szTarget);
@@ -157,6 +135,7 @@ int main(int argc, char **argv)
     int processing_matrix_len[MAX_NODES];
     memset(processing_matrix, -1, sizeof processing_matrix);
     memset(processing_matrix_len, 0, sizeof processing_matrix_len);
+    // build the sequences matrix, targets in the same layer means they can be execute simultaneously.
     build_processing_matrix(nTargetCount,
                             targets,
                             processing_matrix,
@@ -166,6 +145,7 @@ int main(int argc, char **argv)
                             );
 
     int lost_number = 0;
+    // count targets which are needed but do not exist
     if ((lost_number = check_dependencies_by_matrix(targets,
                                                     processing_matrix,
                                                     processing_matrix_len,
@@ -176,6 +156,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    // count the total stps
     int tot_steps = 0;
     for (i = 0; i < MAX_NODES; i++)
     {
@@ -183,16 +164,18 @@ int main(int argc, char **argv)
     }
     if (tot_steps == 0)
     {
-        fprintf(stderr, "make4061: all files needed by '%s' are up-to-date.\n", szTarget);
+        //already up-to-date
+        fprintf(stderr, "make4061: '%s' is up-to-date.\n", szTarget);
     }
 
     if (donot_exec)
     {
-        // '-n', just show
+        // '-n', just show the commands and do not execute them
         display_processing_matrix(processing_matrix, targets, processing_matrix_len);
     }
     else
     {
+        // run!
         execute_commands_by_matrix(processing_matrix, targets, processing_matrix_len);
     }
 
