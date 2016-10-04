@@ -50,7 +50,6 @@ int find_target(char * lpszTargetName, target_t * const t, int const nTargetCoun
 int parse(char * lpszFileName, target_t * const t);
 void show_targets(target_t * const t, int const nTargetCount);
 int makeargv(const char *s, const char *delimiters, char ***argvp);
-void freemakeargv(char **argv);
 
 void build_processing_matrix(int const nTargetCount,
                              target_t * const t,

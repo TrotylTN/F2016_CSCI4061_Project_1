@@ -33,7 +33,7 @@ char* file_getline(char* buffer, FILE* fp) {
 //Return -1 if file does not exist
 int is_file_exist(char * lpszFileName)
 {
-    return access(lpszFileName, F_OK); 
+    return access(lpszFileName, F_OK);
 }
 
 int get_file_modification_time(char * lpszFileName)
@@ -44,7 +44,7 @@ int get_file_modification_time(char * lpszFileName)
         int nStat = stat(lpszFileName, &buf);
         return buf.st_mtime;
     }
-    
+ 
     return -1;
 }
 
@@ -56,23 +56,10 @@ int compare_modification_time(char * fileName1, char * fileName2)
 
 //    printf("%s - %d  :  %s - %d\n", lpsz1, nTime1, lpsz2, nTime2);
 
-    if(nTime1 == -1 || nTime2 == -1)
-    {
-        return -1;
-    }
-
-    if(nTime1 == nTime2)
-    {
-        return 0;
-    }
-    else if(nTime1 > nTime2)
-    {
-        return 1;
-    }
-    else
-    {
-        return 2;
-    }
+    if(nTime1 == -1 || nTime2 == -1) return -1;
+    if(nTime1 == nTime2) return 0;
+    if(nTime1 > nTime2) return 1;
+    return 2;
 }
 
 // makeargv
@@ -117,19 +104,11 @@ int makeargv(const char *s, const char *delimiters, char ***argvp) {
    return numtokens;
 }
 
-void freemakeargv(char **argv) {
-   if (argv == NULL)
-      return;
-   if (*argv != NULL)
-      free(*argv);
-   free(argv);
-}
-
 // Used to find the index of target with targetName = lpszTargetName from the list of targets "t"
 int find_target(char * lpszTargetName, target_t * const t, int const nTargetCount)
 {
-    int i=0;
-    for(i=0;i<nTargetCount;i++)
+    int i = 0;
+    for(i = 0; i < nTargetCount; i++)
     {
         if(strcmp(lpszTargetName, t[i].szTarget) == 0)
         {
@@ -161,7 +140,7 @@ int parse(char * lpszFileName, target_t * const t)
         return -1;
     }
 
-    while(file_getline(szLine, fp) != NULL) 
+    while(file_getline(szLine, fp) != NULL)
     {
         nLine++;
         // this loop will go through the given file, one line at a time
@@ -179,9 +158,9 @@ int parse(char * lpszFileName, target_t * const t)
         {
             lpszLine++;
         }
-        
+ 
         //skip if whitespace-only
-        if(strlen(lpszLine) <= 0) 
+        if(strlen(lpszLine) <= 0)
         {
             continue;
         }
@@ -198,7 +177,7 @@ int parse(char * lpszFileName, target_t * const t)
             }
 
             strcpy(pTarget->szCommand, lpszLine);
-            if (makeargv(pTarget->szCommand, " ", &prog_args) == -1) 
+            if (makeargv(pTarget->szCommand, " ", &prog_args) == -1)
             {
                 perror("Error parsing command line");
                 exit(EXIT_FAILURE);
@@ -209,7 +188,7 @@ int parse(char * lpszFileName, target_t * const t)
         }
         else    //Target
         {
-            //check : exist Syntax check 
+            //check : exist Syntax check
             if(strchr(lpszLine, ':') == NULL)
             {
                 fprintf(stderr, "%s: line:%d *** missing separator.  Stop.\n", lpszFileName, nLine);
@@ -257,17 +236,17 @@ int parse(char * lpszFileName, target_t * const t)
 // Use prog_args as arguments for execvp()
 void show_targets(target_t * const t, int const nTargetCount)
 {
-    int i=0;
-    int j=0;
-    int k=0;
-    for(i=0;i<nTargetCount;i++)
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    for(i = 0; i < nTargetCount; i++)
     {
         k = 0;
-        printf("%d. Target: %s  Status: %d\nCommand: %s\nDependency: ", i, t[i].szTarget, t[i].nStatus, t[i].szCommand); 
+        printf("%d. Target: %s  Status: %d\nCommand: %s\nDependency: ", i, t[i].szTarget, t[i].nStatus, t[i].szCommand);
 
-        for(j=0;j<t[i].nDependencyCount;j++)
+        for(j = 0; j < t[i].nDependencyCount; j++)
         {
-            printf("%s ", t[i].szDependencies[j]); 
+            printf("%s ", t[i].szDependencies[j]);
         }
         printf("\nDecomposition of command:\n\t");
         while (t[i].prog_args[k] != NULL) {
@@ -354,7 +333,7 @@ int build_processing_matrix_dfs(int const curr_pos,
         }
         // if the child source file/target is newer than curr_pos itself or one of them doesn't exist, mark temp_timestamp as -1 in order to re-compile
         if ((dependency_timestamp > temp_timestamp) || (dependency_timestamp == -1))
-            temp_timestamp = -1;        
+            temp_timestamp = -1; 
     }
     if (force_repeat || temp_timestamp == -1)
     {
@@ -389,18 +368,19 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                                 int const processing_matrix_len[MAX_NODES]
                                 )
 {
-    int i = 0;
+    int node = 0;
     int j = 0;
     int p = -1;
     int temp_pid = 0;
-    for (i = 0; i < MAX_NODES; i++)
+    for (node = 0; node < MAX_NODES; node++)
     {
-        for (j = 0; j < processing_matrix_len[i]; j++)
+        for (j = 0; j < processing_matrix_len[node]; j++)
         {
-            if (fork() == 0)
+            int child_id = fork();
+            if (child_id == 0)
             {
                 // child
-                p = processing_matrix[i][j];
+                p = processing_matrix[node][j];
                 fprintf(stderr, "%s\n", t[p].szCommand);
                 t[p].pid = getpid();
                 if (execvp(t[p].prog_args[0], t[p].prog_args) != 0)
@@ -409,16 +389,15 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                     perror("error on exec");
                     exit(0);
                 }
-            }
-            else
-            {
-                // parent, continue to next loop to fork next command
+            } else if (child_id == -1) {
+                perror("error on fork");
+                exit(EXIT_FAILURE);
             }
         }
-        for (j = 0; j < processing_matrix_len[i]; j++)
+        for (j = 0; j < processing_matrix_len[node]; j++)
         {
             // waitting for completing all children processors
-            p = processing_matrix[i][j];
+            p = processing_matrix[node][j];
             wait(&t[p].pid);
         }
 
@@ -432,36 +411,26 @@ int check_dependencies_by_matrix(target_t * const t,
                                  int const nTargetCount
                                  )
 {
-    int i = 0;
+    int node = 0;
     int j = 0;
     int k = 0;
     int p = -1; // temp var for matrix[i][j]
-    int return_num = 0; //0 represents everthing OK, other represents at least one file lost
-    for (i = 0; i < MAX_NODES; i++)
+    int files_lost = 0;
+    for (node = 0; node < MAX_NODES; node++)
     {
-        for (j = 0; j < processing_matrix_len[i]; j++)
+        for (j = 0; j < processing_matrix_len[node]; j++)
         {
-            p = processing_matrix[i][j];
+            p = processing_matrix[node][j];
             for (k = 0; k < t[p].nDependencyCount; k++)
             {
-                if (find_target(t[p].szDependencies[k], t, nTargetCount) != -1)
+                if (find_target(t[p].szDependencies[k], t, nTargetCount) == -1 && is_file_exist(t[p].szDependencies[k]) == -1)
                 {
-                    // everything ok;
-                }
-                else
-                {
-                    if (is_file_exist(t[p].szDependencies[k]) != -1)
-                    {
-                        // everthing ok;
-                    }
-                    else
-                    {
-                        return_num++;
-                        fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[p].szDependencies[k], t[p].szTarget);
-                    }
+                    files_lost++;
+                    fprintf(stderr, "Error: '%s' is missing, needed by '%s'.\n", t[p].szDependencies[k], t[p].szTarget);
                 }
             }
         }
     }
-    return return_num; // return the count of missing files
+    return files_lost;
 }
+
