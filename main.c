@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/wait.h> 
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "util.h"
@@ -25,23 +25,17 @@ void show_error_message(char * lpszFileName)
     exit(0);
 }
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     target_t targets[MAX_NODES]; //List of all the targets. Check structure target_t in util.h to understand what each target will contain.
     int nTargetCount = 0;
 
-    // Declarations for getopt
-    extern int optind;
-    extern char * optarg;
-    int ch;
-    char * format = "f:hnB";
-    
     // Variables you'll want to use
     char szMakefile[64] = "Makefile";
     char szTarget[64] = "";
     int i=0;
-    
-    //init targets 
+
+    //init targets
     for(i=0;i<MAX_NODES;i++)
     {
         targets[i].pid=0 ;
@@ -53,26 +47,6 @@ int main(int argc, char **argv)
 
     int force_repeat = 0;   //1 represents '-B' becomes active
     int donot_exec = 0; //1 represents '-n' becomes active
-    while((ch = getopt(argc, argv, format)) != -1) 
-    {
-        // fprintf(stderr, "%c\n", ch);        
-        switch(ch) 
-        {
-            case 'f':
-                strcpy(szMakefile, strdup(optarg));
-                break;
-            case 'n':
-                    donot_exec = 1;
-                break;
-            case 'B':
-                    force_repeat = 1;
-                break;
-            case 'h':
-            default:
-                show_error_message(argv[0]);
-                exit(1);
-        }
-    }
 
     int targetsNum = 0;
     char specifiedTarget[64] = "";
@@ -86,9 +60,24 @@ int main(int argc, char **argv)
         }
         else
         {
-            if (argv[i][1] == 'f')
-                i++;
-            //if '-f' option appears, ignore the next arg
+            switch(argv[i][1])
+            {
+                case 'f':
+                //if '-f' option appears, ignore the next arg
+                    i++;
+                    strcpy(szMakefile, argv[i]);
+                    break;
+                case 'n':
+                        donot_exec = 1;
+                    break;
+                case 'B':
+                        force_repeat = 1;
+                    break;
+                case 'h':
+                default:
+                    show_error_message(argv[0]);
+                    exit(1);
+            }
         }
     }
 
@@ -99,7 +88,7 @@ int main(int argc, char **argv)
     }
 
     /* Parse graph file or die */
-    if((nTargetCount = parse(szMakefile, targets)) == -1) 
+    if((nTargetCount = parse(szMakefile, targets)) == -1)
     {
         return EXIT_FAILURE;
     }
@@ -120,11 +109,11 @@ int main(int argc, char **argv)
 
     // show_targets(targets, nTargetCount);
 
-    //Now, the file has been parsed and the targets have been named. You'll now want to check all dependencies 
-    //(whether they are available targets or files) and then execute the target that was specified on the command line, 
+    //Now, the file has been parsed and the targets have been named. You'll now want to check all dependencies
+    //(whether they are available targets or files) and then execute the target that was specified on the command line,
     //along with their dependencies, etc. Else if no target is mentioned then build the first target found in Makefile.
-    
-    // if the initial target doesn't exist, halt the program. 
+
+    // if the initial target doesn't exist, halt the program.
     if (find_target(szTarget, targets, nTargetCount) == -1)
     {
         fprintf(stderr, "Error: target '%s' does not exist.\n", szTarget);
@@ -181,4 +170,3 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
-

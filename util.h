@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-// the following ifdef/def pair prevents us from having problems if 
+// the following ifdef/def pair prevents us from having problems if
 // we've included util.h in multiple places... it's a handy trick
 #ifndef _UTIL_H_
 #define _UTIL_H_
@@ -34,6 +34,7 @@ int is_file_exist(char * lpszFileName);
 char * file_getline(char*, FILE*);
 int get_file_modification_time(char *);
 int compare_modification_time(char *, char *);
+void freemakeargv(char **argv);
 
 //Build and run the project with given Makefile to see the contents.
 typedef struct target{
