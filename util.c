@@ -104,14 +104,6 @@ int makeargv(const char *s, const char *delimiters, char ***argvp) {
    return numtokens;
 }
 
-void freemakeargv(char **argv) {
-   if (argv == NULL)
-      return;
-   if (*argv != NULL)
-      free(*argv);
-   free(argv);
-}
-
 // Used to find the index of target with targetName = lpszTargetName from the list of targets "t"
 int find_target(char * lpszTargetName, target_t * const t, int const nTargetCount)
 {
