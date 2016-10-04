@@ -44,13 +44,13 @@ int get_file_modification_time(char * lpszFileName)
         int nStat = stat(lpszFileName, &buf);
         return buf.st_mtime;
     }
- 
+
     return -1;
 }
 
 // Compares the timestamp of two files
 int compare_modification_time(char * fileName1, char * fileName2)
-{    
+{
     int nTime1 = get_file_modification_time(fileName1);
     int nTime2 = get_file_modification_time(fileName2);
 
@@ -158,7 +158,7 @@ int parse(char * lpszFileName, target_t * const t)
         {
             lpszLine++;
         }
- 
+
         //skip if whitespace-only
         if(strlen(lpszLine) <= 0)
         {
@@ -333,7 +333,7 @@ int build_processing_matrix_dfs(int const curr_pos,
         }
         // if the child source file/target is newer than curr_pos itself or one of them doesn't exist, mark temp_timestamp as -1 in order to re-compile
         if ((dependency_timestamp > temp_timestamp) || (dependency_timestamp == -1))
-            temp_timestamp = -1; 
+            temp_timestamp = -1;
     }
     if (force_repeat || temp_timestamp == -1)
     {
@@ -389,9 +389,15 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                     perror("error on exec");
                     exit(0);
                 }
-            } else if (child_id == -1) {
-                perror("error on fork");
-                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                // parent
+                if (child_id == -1)
+                {
+                    perror("error on fork");
+                    exit(EXIT_FAILURE);
+                }
             }
         }
         for (j = 0; j < processing_matrix_len[node]; j++)
@@ -433,4 +439,3 @@ int check_dependencies_by_matrix(target_t * const t,
     }
     return files_lost;
 }
-
