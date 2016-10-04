@@ -20,7 +20,7 @@ You just need to use GNU makefile to compile this project.
 * Annelies Odermann
     * Fixed the unreasonable error when options and specific target in a random order.
 * Lidiya Dergacheva
-    * Reviewed the code and added comments.
+    * Stepped through the code to make sure everything is working right and added comments.
 
 **Syntax**
 
