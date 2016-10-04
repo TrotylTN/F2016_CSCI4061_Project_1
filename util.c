@@ -357,7 +357,8 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
     {
         for (j = 0; j < processing_matrix_len[node]; j++)
         {
-            if (fork() == 0)
+            int child_id = fork();
+            if (child_id == 0)
             {
                 // child
                 p = processing_matrix[node][j];
@@ -368,6 +369,9 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                     perror("error on exec");
                     exit(0);
                 }
+            } else if (child_id == -1) {
+                perror("error on fork");
+                exit(EXIT_FAILURE);
             }
         }
         for (j = 0; j < processing_matrix_len[node]; j++)
