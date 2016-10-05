@@ -342,7 +342,7 @@ int build_processing_matrix_dfs(int const curr_pos,
             else
             {
                 dependency_timestamp = get_file_modification_time(temp_name);
-                if (dependency_timestamp > temp_timestamp || (dependency_timestamp == -1))
+                if (dependency_timestamp > temp_timestamp)
                 {
                     temp_timestamp = -1;
                     dependency_timestamp = build_processing_matrix_dfs(k,
