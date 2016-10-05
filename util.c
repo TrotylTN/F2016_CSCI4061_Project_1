@@ -285,7 +285,16 @@ void build_processing_matrix(int const nTargetCount,
                                 force_repeat
                                 );
 }
-
+//count the number of commands args
+int count_cmd_args(char **args)
+{
+    int cnt = 0;
+    if (args == NULL)
+        return 0;
+    while (args[cnt] != NULL)
+        cnt++;
+    return cnt;
+}
 // Consider whether the target is already in the matrix
 int not_in_matrix(int curr_pos, int processing_matrix[MAX_NODES][MAX_NODES])
 {
@@ -348,7 +357,8 @@ int build_processing_matrix_dfs(int const curr_pos,
         if (not_in_matrix(curr_pos, processing_matrix)) // if the target is already in the matrix, we ignore it and return the timestamp directly.
         {
             level[curr_pos] = max(curr_level, 0);
-            processing_matrix[level[curr_pos]][processing_matrix_len[level[curr_pos]]++] = curr_pos;
+            if (count_cmd_args(t[curr_pos].prog_args) > 0)
+                processing_matrix[level[curr_pos]][processing_matrix_len[level[curr_pos]]++] = curr_pos;
         }
     }
     return temp_timestamp;
