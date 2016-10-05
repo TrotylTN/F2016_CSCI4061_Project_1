@@ -313,8 +313,8 @@ int build_processing_matrix_dfs(int const curr_pos,
     int dependency_timestamp = 0x7fffffff;
     int i = 0;
     int k = 0;
+    int curr_level = level[curr_pos];
     char *temp_name;
-
     for (i = 0; i < t[curr_pos].nDependencyCount; i++)
     {
         temp_name = t[curr_pos].szDependencies[i];
@@ -323,20 +323,39 @@ int build_processing_matrix_dfs(int const curr_pos,
         {
             // this is a source file
             dependency_timestamp = get_file_modification_time(temp_name);
-            level[curr_pos] = max(level[curr_pos], 0);
+            curr_level = max(curr_level, 0);
         }
         else
         {
             // this is a target
-            dependency_timestamp = build_processing_matrix_dfs(k,
-                                                               processing_matrix_len,
-                                                               processing_matrix,
-                                                               nTargetCount,
-                                                               t,
-                                                               level,
-                                                               force_repeat
-                                                               );
-            level[curr_pos] = max(level[curr_pos], level[k] + 1);
+            if (force_repeat)
+            {
+                dependency_timestamp = build_processing_matrix_dfs(k,
+                                                                   processing_matrix_len,
+                                                                   processing_matrix,
+                                                                   nTargetCount,
+                                                                   t,
+                                                                   level,
+                                                                   force_repeat
+                                                                   );
+            }
+            else
+            {
+                dependency_timestamp = get_file_modification_time(temp_name);
+                if (dependency_timestamp > temp_timestamp)
+                {
+                    temp_timestamp = -1;
+                    dependency_timestamp = build_processing_matrix_dfs(k,
+                                                                       processing_matrix_len,
+                                                                       processing_matrix,
+                                                                       nTargetCount,
+                                                                       t,
+                                                                       level,
+                                                                       force_repeat
+                                                                       );
+                }
+            }
+            curr_level = max(curr_level, level[k] + 1);
         }
         // if the child source file/target is newer than curr_pos itself or one of them doesn't exist, mark temp_timestamp as -1 in order to re-compile
         if ((dependency_timestamp > temp_timestamp) || (dependency_timestamp == -1))
@@ -346,6 +365,7 @@ int build_processing_matrix_dfs(int const curr_pos,
     {
         if (not_in_matrix(curr_pos, processing_matrix)) // if the target is already in the matrix, we ignore it and return the timestamp directly.
         {
+            level[curr_pos] = curr_level;
             processing_matrix[level[curr_pos]][processing_matrix_len[level[curr_pos]]++] = curr_pos;
         }
     }
