@@ -1,8 +1,0 @@
-all: a.c b.c e.c f.o
-	echo “123”
-
-f.o: h.c
-	echo “h.c”
-
-h.o:
-	echo “nothing”

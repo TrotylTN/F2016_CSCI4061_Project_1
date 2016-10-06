@@ -397,12 +397,11 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
         for (j = 0; j < processing_matrix_len[node]; j++)
         {
             int child_id = fork();
+            p = processing_matrix[node][j];            
             if (child_id == 0)
             {
                 // child
-                p = processing_matrix[node][j];
                 fprintf(stderr, "%s\n", t[p].szCommand);
-                t[p].pid = getpid();
                 if (execvp(t[p].prog_args[0], t[p].prog_args) != 0)
                 {
                     //fail to execute
@@ -418,6 +417,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                     perror("error on fork");
                     exit(EXIT_FAILURE);
                 }
+                t[p].pid = child_id;
             }
         }
         for (j = 0; j < processing_matrix_len[node]; j++)
