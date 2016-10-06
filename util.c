@@ -388,6 +388,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                                 )
 {
     int node = 0;
+    int Rstatus = 0;
     int j = 0;
     int p = -1;
     int temp_pid = 0;
@@ -406,7 +407,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
                 {
                     //fail to execute
                     perror("error on exec");
-                    exit(0);
+                    exit(-1);
                 }
             }
             else
@@ -423,7 +424,7 @@ void execute_commands_by_matrix(int const processing_matrix[MAX_NODES][MAX_NODES
         {
             // waitting for completing all children processors
             p = processing_matrix[node][j];
-            wait(&t[p].pid);
+            t[p].pid = waitpid(t[p].pid, &Rstatus, 0);
         }
 
     }
